@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 
 // import sequelize operator
 // https://sequelize.org/master/manual/model-querying-basics.html#operators
+// on adaalah penerima
+// emmit adalah pengirim
 const { Op } = require("sequelize");
 
 const connectedUser = {};
@@ -27,7 +29,8 @@ const socketIo = (io) => {
     // save to connectedUser
     connectedUser[userId] = socket.id;
 
-    // define listener on event load admin contact
+    // search admin contact karena admin cm 1
+    // integrasi di sisi client
     socket.on("load admin contact", async () => {
       try {
         const adminContact = await user.findOne({
@@ -55,6 +58,7 @@ const socketIo = (io) => {
     });
 
     // define listener on event load customer contact
+    // integrasi di sisi admin
     socket.on("load customer contacts", async () => {
       try {
         let customerContacts = await user.findAll({
@@ -86,6 +90,7 @@ const socketIo = (io) => {
           },
         });
 
+        // parsing customer contact agar bisa mapping dan bisa ditampilkan.
         customerContacts = JSON.parse(JSON.stringify(customerContacts));
         customerContacts = customerContacts.map((item) => ({
           ...item,
@@ -96,7 +101,7 @@ const socketIo = (io) => {
               : null,
           },
         }));
-
+        // penerima mendapatkan customer contacts chat.
         socket.emit("customer contacts", customerContacts);
       } catch (err) {
         console.log(err);
